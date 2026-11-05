@@ -1,0 +1,270 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<!--
+  ============================================================
+  FILE: favorites.html - REDLINE Auto Showroom (demonstration)
+  ============================================================
+  1. PURPOSE: Saved vehicles, stored as vehicle IDs on this device. No registration.
+  2. IMPORTANT SECTIONS: header, page content (see the SECTION comments),
+     shared panels (login, account, menu, search, info, video, lightbox),
+     comparison tray, footer, cookie banner.
+  3. FEATURES IT CONTROLS: the visible structure only. Behaviour comes from
+     the JavaScript files at the end of <body>.
+  4. DEPENDENCIES: assets/css/style.css, animations.css, responsive.css;
+     assets/js/config.js + analytics.js (in <head>); main.js, vehicles.js,
+     favorites.js, comparison.js, filters.js, forms.js, motion.js (end of <body>).
+  5. HOW A BEGINNER CAN MODIFY IT: edit visible text freely. Keep every
+     id="..." and data-... attribute (JavaScript uses them). Vehicles,
+     prices and photos are edited in assets/js/vehicles.js.
+  6. GA4 / GTM: see the integration section just below and the noscript
+     section right after <body>. IDs live in assets/js/config.js.
+  NOTE: independent educational demo. Not a dealer; no vehicle is for sale;
+  not affiliated with any manufacturer shown.
+  ============================================================
+-->
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Favorites - REDLINE Auto Showroom (demo)</title>
+<meta name="description" content="Saved vehicles, stored as vehicle IDs on this device. No registration.">
+
+<!-- ==========================================
+     GA4 AND GTM INTEGRATION SECTION
+     ==========================================
+
+     Purpose:
+     This section is reserved for Google Analytics 4
+     and Google Tag Manager integration.
+
+     GA4 Measurement ID: G-XXXXXXXXXX   (enter it inside GTM)
+     GTM Container ID:   GTM-XXXXXXX    (set in assets/js/config.js)
+
+     IMPORTANT:
+     Replace placeholder IDs with real IDs in assets/js/config.js.
+     analytics.js inserts the official GTM container snippet
+     (loadGoogleTagManager) only when a real ID is set AND the
+     visitor accepted the cookie banner.
+     Do not delete this section.
+
+     Avoid installing GA4 twice.
+     GA4 is configured through GTM: do NOT add a gtag.js snippet.
+     Page views: one per page load (GA4 Google tag in GTM). This
+     site sends no virtual page views.
+========================================== -->
+<script src="assets/js/config.js"></script>
+<script src="assets/js/analytics.js"></script>
+<!-- ========== END GA4 AND GTM INTEGRATION SECTION ========== -->
+
+<!-- Fonts: Orbitron (technical display headings) + Inter (text). Change in style.css SECTION 1. -->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700;800;900&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="preconnect" href="https://upload.wikimedia.org">
+<link rel="stylesheet" href="assets/css/style.css">
+<link rel="stylesheet" href="assets/css/animations.css">
+<link rel="stylesheet" href="assets/css/responsive.css">
+<link rel="icon" href="assets/images/logo.svg" type="image/svg+xml">
+</head>
+<body data-page="favorites">
+<!-- ==========================================
+     GTM NOSCRIPT SECTION (keep immediately after <body>)
+     After replacing GTM-XXXXXXX with the real ID, remove the comment
+     markers around the <noscript> block below.
+
+<noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-XXXXXXX"
+height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+
+========================================== -->
+<a class="skip-link" href="#main">Skip to content</a>
+
+<!-- ============================================================
+     HEADER (sticky on every page)
+     ============================================================ -->
+<header class="site-header">
+  <!-- LINK: Logo. Handler: handleNavigationClick() (navigation_clicked). Result: home page. -->
+  <a class="logo" href="index.html" data-nav-location="header" data-nav-label="Logo" aria-label="REDLINE Auto Showroom home">
+    <svg class="logo__mark" viewBox="0 0 64 32" aria-hidden="true" focusable="false"><path d="M2 26 L22 6 H62 L42 26 Z" fill="none" stroke="#E50920" stroke-width="3"/><path d="M14 26 L30 10 H50" fill="none" stroke="#fff" stroke-width="3"/><circle cx="52" cy="20" r="3" fill="#E50920"/></svg><span class="logo__text"><strong>REDLINE</strong><small>Auto Showroom</small></span>
+  </a>
+  <!-- LINKS: main navigation. Handler: handleNavigationClick() in main.js.
+       Analytics: navigation_clicked (link_text, link_url, link_location=header). -->
+  <nav class="main-nav" aria-label="Main">
+    <ul>
+      <li><a href="index.html" data-page-link="index" data-nav-location="header" data-nav-label="Home"><span data-i18n="nav_home">Home</span></a></li>
+      <li><a href="inventory.html" data-page-link="inventory" data-nav-location="header" data-nav-label="Inventory"><span data-i18n="nav_inventory">Inventory</span></a></li>
+      <li><a href="compare.html" data-page-link="compare" data-nav-location="header" data-nav-label="Compare"><span data-i18n="nav_compare">Compare</span> <span class="count-badge" data-compare-count hidden>0</span></a></li>
+      <li><a href="favorites.html" data-page-link="favorites" data-nav-location="header" data-nav-label="Favorites"><span data-i18n="nav_favorites">Favorites</span> <span class="count-badge" data-favorites-count hidden>0</span></a></li>
+      <li><a href="contact.html" data-page-link="contact" data-nav-location="header" data-nav-label="Contact"><span data-i18n="nav_contact">Contact</span></a></li>
+    </ul>
+  </nav>
+  <div class="header-actions">
+    <!-- BUTTON: Login. Handler: openPanel("login-panel") in main.js. Result: demo notice (no sign-in exists). Analytics: none. -->
+    <button type="button" class="header-btn" data-open="login" aria-expanded="false" aria-controls="login-panel"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M10 17l5-5-5-5M15 12H3M14 4h5a1 1 0 0 1 1 1v14a1 1 0 0 1-1 1h-5"/></svg><span data-i18n="login">Login</span></button>
+    <!-- BUTTON: Account. Handler: openAccountPanel() in main.js. Result: saved/compare counts on this device. Analytics: none. -->
+    <button type="button" class="header-btn" data-open="account" aria-expanded="false" aria-controls="account-panel"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><circle cx="12" cy="8" r="4"/><path d="M4.5 20a7.5 7.5 0 0 1 15 0"/></svg><span data-i18n="account">Account</span></button>
+    <!-- BUTTON: Search (icon + label). Handler: openSearchPanel() in filters.js. Analytics: "search" only when submitted. -->
+    <button type="button" class="header-btn" data-open="search" aria-expanded="false" aria-controls="search-panel"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg><span data-i18n="search">Search</span></button>
+    <!-- SELECT: Language. Handler: handleLanguageChange() in main.js. Analytics: language_selected. -->
+    <label class="lang-select"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3a14 14 0 0 1 0 18M12 3a14 14 0 0 0 0 18"/></svg><span class="visually-hidden">Language</span>
+      <select id="language-select" aria-label="Language">
+        <option value="en">EN</option><option value="de">DE</option><option value="ar">AR</option>
+      </select>
+    </label>
+    <!-- BUTTON: Menu (hamburger). Handler: openPanel("menu-panel") in main.js. Analytics: none on open. -->
+    <button type="button" class="header-btn header-btn--menu" data-open="menu" aria-expanded="false" aria-controls="menu-panel"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M4 7h16M4 12h16M4 17h16"/></svg><span data-i18n="menu">Menu</span></button>
+  </div>
+</header>
+
+<main id="main" class="page">
+
+  <section class="page-head" data-reveal>
+    <p class="kicker">Saved on this device</p>
+    <h1 class="page-title">Favorites</h1>
+    <p class="page-intro">Vehicles you saved with the heart button. Only vehicle IDs are stored, in this browser only.</p>
+  </section>
+  <p class="result-count" id="favorites-count-text" aria-live="polite"></p>
+  <div class="vehicle-grid" id="favorites-grid" data-list-id="favorites" data-list-name="Favorites"></div>
+  <div class="empty" id="favorites-empty" hidden>
+    <p>You have not saved any vehicles yet. Use the heart on any vehicle to keep it here.</p>
+    <a class="btn btn--red" href="inventory.html" data-nav-location="favorites_page" data-nav-label="Browse inventory">Browse inventory</a>
+  </div>
+</main>
+
+<!-- ============================================================
+     COMPARISON TRAY (appears when vehicles are selected for comparison)
+     ============================================================ -->
+<aside class="compare-tray" id="compare-tray" hidden aria-label="Vehicles selected for comparison">
+  <p class="compare-tray__title">Compare <small>(up to 3)</small></p>
+  <ul class="compare-tray__list" id="compare-tray-list"></ul>
+  <!-- LINK: Compare (n). Opens compare.html (which sends vehicle_comparison_viewed). Disabled below 2 vehicles. -->
+  <a class="btn btn--red btn--small is-disabled" id="compare-tray-open" href="compare.html" aria-disabled="true">Compare (0)</a>
+</aside>
+
+<!-- ============================================================
+     FOOTER
+     ============================================================ -->
+<footer class="site-footer">
+  <div class="footer-grid" data-reveal>
+    <div class="footer-brand">
+      <a class="logo" href="index.html" data-nav-location="footer" data-nav-label="Logo"><svg class="logo__mark" viewBox="0 0 64 32" aria-hidden="true" focusable="false"><path d="M2 26 L22 6 H62 L42 26 Z" fill="none" stroke="#E50920" stroke-width="3"/><path d="M14 26 L30 10 H50" fill="none" stroke="#fff" stroke-width="3"/><circle cx="52" cy="20" r="3" fill="#E50920"/></svg><span class="logo__text"><strong>REDLINE</strong><small>Auto Showroom</small></span></a>
+      <p>An independent demonstration showroom for studying premium automotive websites and web analytics.</p>
+      <ul class="social" aria-label="Social media"><li><a href="#" data-social="instagram" target="_blank" rel="noopener" aria-label="Instagram (opens in a new tab)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><rect x="3.5" y="3.5" width="17" height="17" rx="5"/><circle cx="12" cy="12" r="4"/></svg></a></li><li><a href="#" data-social="youtube" target="_blank" rel="noopener" aria-label="YouTube (opens in a new tab)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><rect x="2.5" y="5.5" width="19" height="13" rx="4"/><path d="m10 9.5 5 2.5-5 2.5z" fill="currentColor"/></svg></a></li><li><a href="#" data-social="x" target="_blank" rel="noopener" aria-label="X (opens in a new tab)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M4 4l16 16M20 4 4 20"/></svg></a></li><li><a href="#" data-social="facebook" target="_blank" rel="noopener" aria-label="Facebook (opens in a new tab)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M14 8h3V4h-3a4 4 0 0 0-4 4v3H7v4h3v6h4v-6h3l1-4h-4V8z"/></svg></a></li></ul>
+    </div>
+    <div>
+      <h2 class="footer-title">Quick links</h2>
+      <ul class="footer-links">
+        <li><a href="index.html" data-nav-location="footer">Home</a></li>
+        <li><a href="inventory.html" data-nav-location="footer">Inventory</a></li>
+        <li><a href="compare.html" data-nav-location="footer">Compare</a></li>
+        <li><a href="favorites.html" data-nav-location="footer">Favorites</a></li>
+        <li><a href="contact.html" data-nav-location="footer">Contact</a></li>
+      </ul>
+    </div>
+    <div>
+      <h2 class="footer-title">Vehicle categories</h2>
+      <ul class="footer-links"><li><a href="inventory.html?type=SUV" data-nav-location="footer">SUV</a></li><li><a href="inventory.html?type=Sedan" data-nav-location="footer">Sedan</a></li><li><a href="inventory.html?type=Coupe" data-nav-location="footer">Coupe</a></li><li><a href="inventory.html?type=Sports%20Car" data-nav-location="footer">Sports Car</a></li><li><a href="inventory.html?type=Electric" data-nav-location="footer">Electric</a></li><li><a href="inventory.html?type=Hybrid" data-nav-location="footer">Hybrid</a></li><li><a href="inventory.html?type=Luxury" data-nav-location="footer">Luxury</a></li></ul>
+    </div>
+    <div>
+      <h2 class="footer-title">Contact (demo details)</h2>
+      <ul class="footer-contact">
+        <li data-site="address"></li>
+        <li><a href="#" data-site="phone-link"></a></li>
+        <li><a href="#" data-site="email-link"></a></li>
+        <li data-site="hours"></li>
+      </ul>
+      <h2 class="footer-title">Newsletter</h2>
+      <p class="footer-small">Showroom news and new arrivals. <a href="index.html#newsletter" data-nav-location="footer">Subscribe (demo)</a></p>
+    </div>
+  </div>
+  <div class="footer-bottom">
+    <p>&copy; <span id="current-year">2026</span> REDLINE Auto Showroom (fictional). <span data-site="disclaimer"></span></p>
+    <nav aria-label="Legal">
+      <a href="privacy.html" data-nav-location="footer">Privacy Policy</a>
+      <a href="privacy.html#terms" data-nav-location="footer">Terms &amp; Conditions</a>
+    </nav>
+  </div>
+</footer>
+
+<!-- ============================================================
+     SHARED PANELS (hidden until opened; X, backdrop or Escape closes)
+     ============================================================ -->
+<div class="backdrop" id="panel-backdrop" hidden></div>
+
+<aside class="panel panel--side" id="login-panel" hidden role="dialog" aria-modal="true" aria-labelledby="login-title">
+  <div class="panel__head"><h2 id="login-title">Login</h2>
+    <!-- BUTTON: Close. Handler: closePanel() in main.js. Analytics: none. -->
+    <button type="button" class="icon-btn" data-close-panel aria-label="Close login"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M6 6l12 12M18 6 6 18"/></svg></button></div>
+  <p>Sign-in is not available in this demonstration showroom, so no username or password is requested.</p>
+  <p>Favorites and comparisons work without an account and are kept on this device only.</p>
+  <a class="btn btn--red" href="favorites.html" data-nav-location="login_panel">Open my favorites</a>
+</aside>
+
+<aside class="panel panel--side" id="account-panel" hidden role="dialog" aria-modal="true" aria-labelledby="account-title">
+  <div class="panel__head"><h2 id="account-title">Account</h2>
+    <button type="button" class="icon-btn" data-close-panel aria-label="Close account"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M6 6l12 12M18 6 6 18"/></svg></button></div>
+  <p class="notice">Demo account area. Nothing here is linked to a person.</p>
+  <ul class="account-list">
+    <li><a href="favorites.html" data-nav-location="account_panel">Saved vehicles <strong id="account-favorites-count">0</strong></a></li>
+    <li><a href="compare.html" data-nav-location="account_panel">Vehicles in comparison <strong id="account-compare-count">0</strong></a></li>
+    <li><a href="contact.html" data-nav-location="account_panel">Contact the showroom</a></li>
+  </ul>
+</aside>
+
+<aside class="panel panel--side" id="menu-panel" hidden role="dialog" aria-modal="true" aria-labelledby="menu-title">
+  <div class="panel__head"><h2 id="menu-title">Menu</h2>
+    <button type="button" class="icon-btn" data-close-panel aria-label="Close menu"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M6 6l12 12M18 6 6 18"/></svg></button></div>
+  <!-- LINKS: each sends navigation_clicked (link_location=menu_panel). -->
+  <ul class="menu-list">
+    <!-- BUTTONS: Login / Account (shown here on small screens, where the header hides them). Same handlers as the header. -->
+    <li class="menu-list__small"><button type="button" data-open="login">Login</button></li>
+    <li class="menu-list__small"><button type="button" data-open="account">Account</button></li>
+    <li><a href="index.html" data-nav-location="menu_panel">Home</a></li>
+    <li><a href="inventory.html" data-nav-location="menu_panel">Inventory</a></li>
+    <li><a href="vehicle.html?id=tesla-roadster" data-nav-location="menu_panel">Tesla Roadster</a></li>
+    <li><a href="compare.html" data-nav-location="menu_panel">Compare</a></li>
+    <li><a href="favorites.html" data-nav-location="menu_panel">Favorites</a></li>
+    <li><a href="contact.html?type=test_drive" data-nav-location="menu_panel">Book a test drive</a></li>
+    <li><a href="contact.html" data-nav-location="menu_panel">Contact</a></li>
+  </ul>
+</aside>
+
+<div class="panel panel--top" id="search-panel" hidden role="dialog" aria-modal="true" aria-labelledby="search-title">
+  <div class="panel__head"><h2 id="search-title">Search vehicles</h2>
+    <button type="button" class="icon-btn" data-close-panel aria-label="Close search"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M6 6l12 12M18 6 6 18"/></svg></button></div>
+  <form class="search-form" id="search-form" role="search">
+    <label for="search-input" class="visually-hidden">Search by brand, model or type</label>
+    <input type="search" id="search-input" placeholder="BMW, Audi, Electric, SUV, Roadster..." autocomplete="off" data-autofocus>
+    <!-- BUTTON: Search. Handler: handleSearchSubmit() in filters.js. Analytics: search. -->
+    <button type="submit" class="btn btn--red">Search</button>
+  </form>
+  <div id="search-results" aria-live="polite"></div>
+</div>
+
+<aside class="panel panel--side panel--wide" id="content-panel" hidden role="dialog" aria-modal="true" aria-labelledby="content-panel-title">
+  <div class="panel__head"><h2 id="content-panel-title">Details</h2>
+    <button type="button" class="icon-btn" data-close-panel aria-label="Close panel"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M6 6l12 12M18 6 6 18"/></svg></button></div>
+  <div class="content-panel-body" id="content-panel-body"></div>
+</aside>
+
+<div class="toast-container" id="toast-container" aria-live="polite"></div>
+
+<!-- COOKIE BANNER (only with a real GTM ID and no saved choice).
+     BUTTONS: Accept / Decline. Handler: handleConsentChoice() in analytics.js. -->
+<div class="consent" id="consent-banner" hidden role="region" aria-label="Cookie consent">
+  <p>We use cookies for anonymous website statistics (Google Analytics). No personal or form details are collected. <a href="privacy.html">Privacy Policy</a></p>
+  <div class="consent__actions">
+    <button type="button" class="btn btn--ghost btn--small" id="consent-decline-btn">Decline</button>
+    <button type="button" class="btn btn--red btn--small" id="consent-accept-btn">Accept</button>
+  </div>
+</div>
+
+<!-- JavaScript (keep this order) -->
+<script src="assets/js/main.js"></script>
+<script src="assets/js/vehicles.js"></script>
+<script src="assets/js/favorites.js"></script>
+<script src="assets/js/comparison.js"></script>
+<script src="assets/js/filters.js"></script>
+<script src="assets/js/forms.js"></script>
+<!-- Motion layer (3D depth, tilt, reveals, page transitions). Visual only; sends no analytics. -->
+<script src="assets/js/motion.js"></script>
+</body>
+</html>

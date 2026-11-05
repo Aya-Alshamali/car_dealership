@@ -1,0 +1,166 @@
+/* ============================================================
+   FILE: assets/css/animations.css
+   ============================================================
+   1. PURPOSE: all movement and 3D depth: hero 3D stage and entrance,
+      light sweep, floor reflection, speed lines, 3D dashboard, card tilt
+      glare and entrance, press feedback, scroll reveals, panels, viewer,
+      toasts, and the cross-page photo morph (View Transitions).
+   2. IMPORTANT SECTIONS: A Transitions & press feedback  B Hero 3D
+      C Cards & tiles  D Scroll reveal  E Panels, viewer, toasts
+      F Page transitions  G Keyframes  H Reduced motion
+   3. FEATURES IT CONTROLS: motion only (layout lives in style.css).
+      motion.js drives the pointer-based parts (hero tilt, card tilt,
+      count-up, photo swaps); this file holds everything CSS can do alone.
+   4. DEPENDENCIES: load after style.css (uses --ease-out, --ease-in-out,
+      --ease-drawer from its SECTION 1), before responsive.css.
+   5. HOW A BEGINNER CAN MODIFY IT: change durations and distances. To
+      remove an effect, delete its rule. Keep SECTION H (reduced motion).
+      Hover motion is wrapped in "(hover: hover) and (pointer: fine)" so
+      touch screens never get stuck hover states.
+   6. GA4 / GTM: none. Animations never send analytics events.
+   ============================================================ */
+
+/* ============ A. TRANSITIONS AND PRESS FEEDBACK ============ */
+.btn, .icon-btn, .round-btn, .type-chip, .tabs button, .thumb, .header-btn, .main-nav a, .social a {
+  transition: background-color 0.2s ease, color 0.2s ease, border-color 0.2s ease, box-shadow 0.25s ease, transform 0.16s var(--ease-out), opacity 0.2s ease;
+}
+/* Feedback: things you press give way slightly, like a physical button. */
+.btn:active, .icon-btn:active, .round-btn:active, .type-chip:active, .brand-tile:active, .tabs button:active, .dot:active { transform: scale(0.97); }
+.menu-list a, .menu-list button { transition: color 0.2s ease, transform 0.2s var(--ease-out); }
+
+@media (hover: hover) and (pointer: fine) {
+  .menu-list a:hover, .menu-list button:hover { padding-left: 0; transform: translateX(8px); }
+  .round-btn:hover { transform: scale(1.06); }
+  .btn--red:hover svg { transform: translateX(3px); }
+}
+.btn svg { transition: transform 0.2s var(--ease-out); }
+
+/* ============ B. HERO: 3D STAGE ============ */
+/* The hero gives its children depth; motion.js turns the stage. */
+.hero { perspective: 1400px; perspective-origin: 50% 40%; }
+.hero__stage { transform-style: preserve-3d; will-change: transform; }
+.hero__word { transform: translateZ(-90px) scale(1.07); }           /* far layer */
+.hero__frame { transform-style: preserve-3d; transform: translateZ(30px); }
+.corner { transform: translateZ(50px); }                              /* frame corners float in front */
+.dashboard { transform: translateZ(60px) rotateX(24deg); transform-origin: 50% 100%; }   /* gauge lies like a dashboard */
+.hero__kicker { transform: translateZ(20px); }
+
+/* Pointer highlight on the car (moved by motion.js) */
+.hero__shine {
+  position: absolute; inset: -20%; pointer-events: none; mix-blend-mode: soft-light;
+  background: radial-gradient(circle at 50% 40%, rgba(255, 255, 255, 0.55), transparent 45%);
+}
+/* Light sweep across the car on feature change (played by motion.js) */
+.hero__sweep {
+  position: absolute; top: 0; bottom: 0; left: 0; width: 35%; pointer-events: none; opacity: 0;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.35), transparent);
+  transform: translateX(-120%) skewX(-18deg);
+}
+/* Polished-floor reflection under the car (Chrome, Edge, Safari) */
+.hero__car { -webkit-box-reflect: below 4px linear-gradient(transparent 72%, rgba(255, 255, 255, 0.16)); }
+
+/* Idle life: the car hovers slightly, speed lines drift, gauge glows */
+.hero__car { animation: carFloat 7s ease-in-out infinite; }
+.hero__lines::after {
+  content: ""; position: absolute; inset: -20% -50%;
+  background: repeating-linear-gradient(115deg, transparent 0 220px, rgba(255, 255, 255, 0.07) 220px 222px);
+  animation: speedLines 9s linear infinite;
+}
+#gauge-arc { transition: stroke-dashoffset 0.9s var(--ease-out); }
+.dashboard__svg { animation: gaugeGlow 3.6s ease-in-out infinite; }
+
+/* Entrance on page load: word rises, car drives in, panel settles */
+.hero__word { animation: wordRise 0.9s var(--ease-out) both; }
+.hero__frame { animation: carArrive 1.1s var(--ease-out) 0.15s both; }
+.dashboard { animation: dashArrive 0.9s var(--ease-out) 0.45s both; }
+.hero__info { animation: fadeUp 0.7s var(--ease-out) 0.6s both; }
+.hero__rail { animation: fadeIn 0.6s ease 0.8s both; }
+
+/* ============ C. CARDS AND TILES ============ */
+/* motion.js writes the 3D tilt on the card itself; this eases it home. */
+.vehicle-card { transform-style: preserve-3d; transition: transform 0.5s var(--ease-out), border-color 0.3s ease, box-shadow 0.3s ease; }
+.vehicle-card.is-tilting { transition: transform 0.12s linear, border-color 0.3s ease, box-shadow 0.3s ease; }
+.vehicle-card__media { position: relative; }
+.card-glare {
+  position: absolute; inset: -40%; pointer-events: none; opacity: 0; z-index: 1;
+  background: radial-gradient(circle at 50% 50%, rgba(255, 255, 255, 0.28), transparent 45%);
+  transition: opacity 0.3s ease;
+}
+/* Entrance: cards fill in one after another (--i set per card, max 8).
+   "backwards" fill only: once finished, the animation lets go of
+   transform so the tilt can use it. */
+.vehicle-card { animation: cardIn 0.32s var(--ease-out) backwards; animation-delay: calc(min(var(--i, 0), 8) * 40ms); }
+.vehicle-card__media img { transition: transform 0.6s var(--ease-out); }
+@media (hover: hover) and (pointer: fine) {
+  .vehicle-card:hover { box-shadow: 0 24px 50px rgba(0, 0, 0, 0.55), 0 0 0 1px rgba(229, 9, 32, 0.35); }
+  .vehicle-card:hover .vehicle-card__media img { transform: scale(1.06); }
+  .feature-panel img { transition: transform 0.8s var(--ease-out); }
+  .feature-panel:hover img { transform: scale(1.05); }
+  .brand-tile { transition: transform 0.25s var(--ease-out), border-color 0.2s ease, box-shadow 0.25s ease; }
+  .brand-tile:hover { transform: perspective(600px) translateZ(14px) rotateX(6deg); border-color: #777; }
+}
+.brand-tile.is-active { transition: box-shadow 0.3s ease, border-color 0.3s ease; }
+.icon-btn--card[aria-pressed="true"] svg { animation: heartPop 0.32s var(--ease-out); }
+
+/* ============ D. SCROLL REVEAL (motion.js adds .reveal-ready / .is-revealed) ============ */
+.reveal-ready [data-reveal] { opacity: 0; transform: perspective(1200px) translateY(36px) rotateX(5deg); transition: opacity 0.7s var(--ease-out), transform 0.9s var(--ease-out); }
+.reveal-ready [data-reveal].is-revealed { opacity: 1; transform: none; }
+.reveal-ready [data-reveal] [data-reveal-item] { opacity: 0; transform: translateY(24px); transition: opacity 0.6s var(--ease-out), transform 0.7s var(--ease-out); }
+.reveal-ready [data-reveal].is-revealed [data-reveal-item] { opacity: 1; transform: none; }
+
+/* ============ E. PANELS, VIEWER, TOASTS ============ */
+.panel { transition: transform 0.4s var(--ease-drawer), opacity 0.3s ease; }
+.panel--side { transform: translateX(100%); }
+.panel--top { transform: translateY(-100%); }
+.panel--center { opacity: 0; transform: translate(-50%, -48%) scale(0.96); }
+.panel.is-open { transform: none; opacity: 1; }
+.panel--center.is-open { transform: translate(-50%, -50%) scale(1); }
+.lightbox { opacity: 0; transition: opacity 0.25s ease; }
+.lightbox .lightbox__figure { transform: scale(0.94); transition: transform 0.35s var(--ease-out); }
+.lightbox.is-open .lightbox__figure { transform: scale(1); }
+.backdrop { animation: fadeIn 0.25s ease; }
+/* Toasts: a transition from a starting style (no keyframes, so rapid toasts never restart) */
+.toast { transition: opacity 0.25s ease, transform 0.3s var(--ease-out); }
+@starting-style { .toast { opacity: 0; transform: translateY(12px); } }
+.toast.is-leaving { opacity: 0; transform: translateY(12px); }
+
+/* ============ F. PAGE TRANSITIONS (cross-page View Transitions) ============
+   Supporting browsers fade between pages, and the clicked card photo
+   grows into the vehicle page photo (both are named "vehicle-photo";
+   motion.js names the clicked one). Others just load normally.
+   Only enabled when the visitor has not asked for reduced motion. */
+@media (prefers-reduced-motion: no-preference) {
+  @view-transition { navigation: auto; }
+  #gallery-main-image { view-transition-name: vehicle-photo; }
+  .site-header { view-transition-name: site-header; }   /* header stays put between pages */
+  ::view-transition-old(root) { animation: 0.22s ease both pageOut; }
+  ::view-transition-new(root) { animation: 0.32s var(--ease-out) both pageIn; }
+  ::view-transition-group(vehicle-photo) { animation-duration: 0.45s; animation-timing-function: var(--ease-out); }
+}
+
+/* ============ G. KEYFRAMES ============ */
+@keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+@keyframes fadeUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: none; } }
+@keyframes cardIn { from { opacity: 0; transform: perspective(900px) translateY(18px) rotateX(10deg) scale(0.97); } }
+@keyframes carFloat { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-8px); } }
+@keyframes speedLines { from { transform: translateX(0); } to { transform: translateX(-244px); } }
+@keyframes gaugeGlow { 0%, 100% { filter: drop-shadow(0 0 8px rgba(255, 42, 61, 0.5)); } 50% { filter: drop-shadow(0 0 18px rgba(255, 42, 61, 0.9)); } }
+@keyframes wordRise { from { opacity: 0; transform: translateZ(-90px) translateY(40px) scale(1.07); } to { opacity: 1; transform: translateZ(-90px) scale(1.07); } }
+@keyframes carArrive { from { opacity: 0; transform: translateZ(30px) translateX(18%) rotateY(-16deg) scale(0.92); } to { opacity: 1; transform: translateZ(30px); } }
+@keyframes dashArrive { from { opacity: 0; transform: translateZ(60px) rotateX(70deg); } to { opacity: 1; transform: translateZ(60px) rotateX(24deg); } }
+@keyframes heartPop { 0% { transform: scale(0.8); } 60% { transform: scale(1.18); } 100% { transform: scale(1); } }
+@keyframes pageOut { to { opacity: 0; transform: scale(0.985); } }
+@keyframes pageIn { from { opacity: 0; transform: translateY(14px); } }
+@keyframes pulse { 0%, 100% { box-shadow: 0 0 0 8px rgba(229, 9, 32, 0.25); } 50% { box-shadow: 0 0 0 16px rgba(229, 9, 32, 0.08); } }
+.video-thumb__play { animation: pulse 2.4s ease-in-out infinite; }
+
+/* ============ H. REDUCED MOTION ============
+   Fewer and gentler, not zero: colour and opacity changes stay, movement,
+   3D turns, idle loops and page morphs go. motion.js also checks this
+   setting and skips the hero tilt, card tilt, count-up and photo slides. */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { animation-duration: 0.01ms !important; animation-iteration-count: 1 !important; transition-duration: 0.01ms !important; scroll-behavior: auto !important; }
+  .hero__car, .video-thumb__play, .hero__lines::after, .dashboard__svg { animation: none !important; }
+  .reveal-ready [data-reveal], .reveal-ready [data-reveal] [data-reveal-item] { opacity: 1; transform: none; }
+  .brand-tile:hover, .vehicle-card:hover { transform: none; }
+}

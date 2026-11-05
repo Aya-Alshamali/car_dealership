@@ -1,0 +1,82 @@
+/* ============================================================
+   FILE: assets/css/responsive.css
+   ============================================================
+   1. PURPOSE: layout changes for laptops (1180px), tablets (920px) and
+      phones (600px).
+   2. IMPORTANT SECTIONS: one @media block per breakpoint.
+   3. FEATURES IT CONTROLS: header collapse to the Menu panel, stacked
+      hero, single-column panels, filters and forms.
+   4. DEPENDENCIES: must load LAST (after style.css and animations.css).
+   5. HOW A BEGINNER CAN MODIFY IT: change breakpoint widths or values.
+   6. GA4 / GTM: none (CSS never tracks).
+   ============================================================ */
+
+@media (max-width: 1180px) {
+  :root { --pad: 24px; }
+  .site-header { gap: 18px; }
+  .main-nav ul { gap: 16px; }
+  .header-btn span { display: none; }              /* icons only */
+  .header-btn--menu span { display: inline; }
+  .filters { grid-template-columns: repeat(3, 1fr); }
+  .filters__search { grid-column: 1 / -1; }
+  .footer-grid { grid-template-columns: 1fr 1fr; }
+}
+
+@media (max-width: 920px) {
+  :root { --header-h: 64px; }
+  .main-nav { display: none; }                      /* the Menu panel takes over */
+  .hero { grid-template-columns: minmax(0, 1fr); padding-top: 20px; }
+  .hero__stage { order: 1; }
+  .hero__rail--left { order: 2; flex-direction: row; justify-content: center; margin-top: 12px; }
+  .hero__rail--right { order: 3; flex-direction: row; justify-content: center; }
+  .hero__numbers { flex-direction: row; }
+  .hero__numbers button { border-left: 0; border-bottom: 2px solid rgba(255, 255, 255, 0.2); }
+  .hero__numbers button.is-active { border-bottom-color: #fff; }
+  .hero__dots { display: none; }
+  .hero__info { order: 4; grid-template-columns: minmax(0, 1fr); }
+  .hero__frame { margin-top: -4%; }
+  /* Touch screens get no pointer tilt, so the depth layers are flattened:
+     this keeps the car frame inside the screen. Idle motion stays. */
+  .hero { perspective: none; }
+  .hero__word { transform: none; animation-name: fadeUp; }
+  .hero__frame, .corner, .hero__kicker { transform: none; }
+  .hero__frame { animation-name: fadeUp; }
+  .dashboard { transform: perspective(700px) rotateX(20deg); animation-name: fadeUp; }
+  .panels-row, .newsletter, .vehicle-layout, .contact-layout, .sources-grid { grid-template-columns: minmax(0, 1fr); }
+  .feature-panel { min-height: 360px; }
+  .newsletter { margin: 0 16px 56px; padding: 28px; }
+  .lightbox { grid-template-columns: minmax(0, 1fr); padding: 60px 12px 12px; }
+  .lightbox__prev, .lightbox__next { position: absolute; bottom: 20px; }
+  .lightbox__prev { left: 20px; }
+  .lightbox__next { right: 20px; }
+}
+
+@media (max-width: 600px) {
+  :root { --pad: 16px; }
+  .logo__text small { display: none; }
+  .logo__mark { width: 40px; }
+  .header-actions { gap: 2px; }
+  .header-btn { padding: 0 8px; }
+  .header-btn--menu span { display: none; }
+  .header-btn[data-open="login"], .header-btn[data-open="account"] { display: none; }   /* moved into the Menu panel */
+  .menu-list__small { display: block; }
+  .site-header { gap: 10px; }
+  .lang-select { padding: 0 4px; }
+  .lang-select svg { display: none; }
+  .hero__word { font-size: 13vw; letter-spacing: 0; }
+  .hero-stats li { min-width: 0; flex: 1 1 120px; }
+  .tabs { width: 100%; }
+  .tabs button { flex: 1; min-width: 0; }
+  .brand-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .vehicle-grid { grid-template-columns: minmax(0, 1fr); }
+  .collection-head #view-inventory-link { margin-left: 0; }
+  .filters { grid-template-columns: minmax(0, 1fr); }
+  .form-grid { grid-template-columns: minmax(0, 1fr); }
+  .vehicle-actions { grid-template-columns: minmax(0, 1fr); }
+  .footer-grid { grid-template-columns: minmax(0, 1fr); }
+  .thumb { width: 84px; height: 47px; }
+  .compare-tray { bottom: 8px; padding: 8px 12px; gap: 10px; flex-wrap: nowrap; }
+  .compare-tray__list { display: none; }        /* compact tray: title + button only */
+  .compare-tray__title { flex: 1; }
+  .search-form { flex-direction: column; }
+}
